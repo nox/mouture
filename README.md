@@ -19,7 +19,7 @@ What is there to do?
 License
 -------
 
-Shippai is published under the ISC license.
+Mouture is published under the ISC license.
 
 From [Wikipedia][1]:
 > The ISC license is a permissive free software license written by the Internet
