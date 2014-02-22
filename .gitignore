@@ -1,0 +1,4 @@
+/ebin/*.beam
+/logs/
+/test/*.beam
+/.mouture_plt
