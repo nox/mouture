@@ -59,10 +59,10 @@ compare({_,_,_}, {_,_,_}) ->
     gt.
 
 -spec is_compatible(version(), version()) -> boolean().
-is_compatible({{X,_,_},_,_}=Expected, {{X,_,_},_,_}=Actual) ->
-    compare(Expected, Actual) =/= gt;
-is_compatible({_,_,_}, {_,_,_}) ->
-    false.
+is_compatible({{X1,_,_},_,_}, {{X2,_,_},_,_}) when X2 =/= X1 ->
+    false;
+is_compatible(Expected, Actual) ->
+    compare(Expected, Actual) =/= gt.
 
 %% Main parts
 
@@ -142,7 +142,7 @@ dot(Bin, Acc, _, Cont) ->
 
 %% Extensions' unparser
 
--spec unparse_ext(byte(), fun((A) -> binary()), [A]) -> iolist().
+-spec unparse_ext(byte(), fun((A) -> binary()), [A]) -> binary().
 unparse_ext(_, _, []) ->
     <<>>;
 unparse_ext(Prefix, F, [H|Rest]) ->
