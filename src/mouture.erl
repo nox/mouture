@@ -15,7 +15,7 @@
 -module(mouture).
 
 -export([parse/1,unparse/1]).
--export([compare/2]).
+-export([compare/2,is_compatible/2]).
 
 -export_type([version/0]).
 
@@ -42,7 +42,7 @@ unparse({{X,Y,Z},Pre,Meta}) ->
       (unparse_ext($-, fun unparse_pre_seg/1, Pre))/binary,
       (unparse_ext($+, fun unparse_meta_seg/1, Meta))/binary>>.
 
-%% Comparison
+%% Comparison and compatibility
 
 -spec compare(version(), version()) -> lt | eq | gt.
 compare({Core,Pre,_}, {Core,Pre,_}) ->
@@ -57,6 +57,12 @@ compare({CoreA,_,_}, {CoreB,_,_}) when CoreA < CoreB ->
     lt;
 compare({_,_,_}, {_,_,_}) ->
     gt.
+
+-spec is_compatible(version(), version()) -> boolean().
+is_compatible({{X,_,_},_,_}=Expected, {{X,_,_},_,_}=Actual) ->
+    compare(Expected, Actual) =/= gt;
+is_compatible({_,_,_}, {_,_,_}) ->
+    false.
 
 %% Main parts
 

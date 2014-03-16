@@ -17,9 +17,9 @@
 -include_lib("common_test/include/ct.hrl").
 
 -export([all/0]).
--export([parse/1,unparse/1,compare/1]).
+-export([parse/1,unparse/1,compare/1,is_compatible/1]).
 
-all() -> [parse,unparse,compare].
+all() -> [parse,unparse,compare,is_compatible].
 
 %% IO
 
@@ -59,7 +59,7 @@ unparse(Config) when is_list(Config) ->
     <<"1.0.0+12.foo">> = mouture:unparse({{1,0,0},[],[<<"12">>,<<"foo">>]}),
     ok.
 
-%% Comparison
+%% Comparison and compatibility
 
 compare(Config) when is_list(Config) ->
     gt = compare(<<"1.0.1">>, <<"1.0.0">>),
@@ -86,7 +86,35 @@ compare(Config) when is_list(Config) ->
     eq = compare(<<"1.0.0+foo">>, <<"1.0.0+bar">>),
     ok.
 
+is_compatible(Config) when is_list(Config) ->
+    false = is_compatible(<<"1.0.1">>, <<"1.0.0">>),
+    false = is_compatible(<<"1.1.0">>, <<"1.0.1">>),
+    false = is_compatible(<<"2.1.1">>, <<"1.2.2">>),
+    false = is_compatible(<<"1.0.0">>, <<"1.0.0-dev">>),
+    false = is_compatible(<<"1.2.3-dev">>, <<"0.1.2">>),
+    false = is_compatible(<<"1.0.0-a.b">>, <<"1.0.0-a">>),
+    false = is_compatible(<<"1.0.0-b">>, <<"1.0.0-a.b">>),
+    false = is_compatible(<<"1.0.0-a">>, <<"1.0.0-0">>),
+    false = is_compatible(<<"1.0.0-a.b">>, <<"1.0.0-a.a">>),
+    true  = is_compatible(<<"1.0.0">>, <<"1.0.1">>),
+    true  = is_compatible(<<"1.0.1">>, <<"1.1.0">>),
+    false = is_compatible(<<"1.2.2">>, <<"2.1.1">>),
+    true  = is_compatible(<<"1.0.0-dev">>, <<"1.0.0">>),
+    false = is_compatible(<<"0.1.2">>, <<"1.2.3-dev">>),
+    true  = is_compatible(<<"1.0.0-a">>, <<"1.0.0-a.b">>),
+    true  = is_compatible(<<"1.0.0-a.b">>, <<"1.0.0-b">>),
+    true  = is_compatible(<<"1.0.0-0">>, <<"1.0.0-a">>),
+    true  = is_compatible(<<"1.0.0-a.a">>, <<"1.0.0-a.b">>),
+    true  = is_compatible(<<"1.0.0">>, <<"1.0.0">>),
+    true  = is_compatible(<<"1.0.0-dev">>, <<"1.0.0-dev">>),
+    true  = is_compatible(<<"1.0.0-a">>, <<"1.0.0-a">>),
+    true  = is_compatible(<<"1.0.0+foo">>, <<"1.0.0+bar">>),
+    ok.
+
 %% Helpers
 
 compare(V1, V2) ->
     mouture:compare(mouture:parse(V1), mouture:parse(V2)).
+
+is_compatible(V1, V2) ->
+    mouture:is_compatible(mouture:parse(V1), mouture:parse(V2)).
