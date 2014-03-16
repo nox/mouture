@@ -14,7 +14,7 @@
 
 {application, mouture, [
     {description, "A semver 2.0.0 parser."},
-    {vsn, "0.0.1"},
+    {vsn, "0.1.0"},
     {registered, []},
     {modules, [mouture]},
     {applications, [
