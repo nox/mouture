@@ -24,6 +24,7 @@ all() -> [parse,unparse,compare,is_compatible].
 %% IO
 
 parse(Config) when is_list(Config) ->
+    {{0,0,0},[],[]} = mouture:parse("0.0.0"),
     {{0,0,0},[],[]} = mouture:parse(<<"0.0.0">>),
     {{1,23,456},[],[]} = mouture:parse(<<"1.23.456">>),
     {{1,0,0},[0],[]} = mouture:parse(<<"1.0.0-0">>),
