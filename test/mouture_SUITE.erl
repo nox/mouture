@@ -49,14 +49,14 @@ parse(Config) when is_list(Config) ->
     ok.
 
 unparse(Config) when is_list(Config) ->
-    <<"0.0.0">> = bin_unparse({{0,0,0},[],[]}),
-    <<"1.23.456">> = bin_unparse({{1,23,456},[],[]}),
-    <<"1.0.0-0">> = bin_unparse({{1,0,0},[0],[]}),
-    <<"1.0.0-0foo">> = bin_unparse({{1,0,0},[<<"0foo">>],[]}),
-    <<"1.0.0-1foo">> = bin_unparse({{1,0,0},[<<"1foo">>],[]}),
-    <<"1.0.0-alpha">> = bin_unparse({{1,0,0},[<<"alpha">>],[]}),
-    <<"1.0.0-1.23.foo.4">> = bin_unparse({{1,0,0},[1,23,<<"foo">>,4],[]}),
-    <<"1.0.0+12.foo">> = bin_unparse({{1,0,0},[],[<<"12">>,<<"foo">>]}),
+    <<"0.0.0">> = mouture:unparse({{0,0,0},[],[]}),
+    <<"1.23.456">> = mouture:unparse({{1,23,456},[],[]}),
+    <<"1.0.0-0">> = mouture:unparse({{1,0,0},[0],[]}),
+    <<"1.0.0-0foo">> = mouture:unparse({{1,0,0},[<<"0foo">>],[]}),
+    <<"1.0.0-1foo">> = mouture:unparse({{1,0,0},[<<"1foo">>],[]}),
+    <<"1.0.0-alpha">> = mouture:unparse({{1,0,0},[<<"alpha">>],[]}),
+    <<"1.0.0-1.23.foo.4">> = mouture:unparse({{1,0,0},[1,23,<<"foo">>,4],[]}),
+    <<"1.0.0+12.foo">> = mouture:unparse({{1,0,0},[],[<<"12">>,<<"foo">>]}),
     ok.
 
 %% Comparison
@@ -87,9 +87,6 @@ compare(Config) when is_list(Config) ->
     ok.
 
 %% Helpers
-
-bin_unparse(V) ->
-    iolist_to_binary(mouture:unparse(V)).
 
 compare(V1, V2) ->
     mouture:compare(mouture:parse(V1), mouture:parse(V2)).

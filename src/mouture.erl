@@ -27,16 +27,20 @@
 
 %% IO
 
--spec parse(binary()) -> version().
-parse(Bin) ->
-  juxta(Bin, [fun core/2, fun preversion/2, fun metadata/2],
+-spec parse(iodata()) -> version().
+parse(Input) when is_list(Input) ->
+  parse(iolist_to_binary(Input));
+parse(Input) when is_binary(Input) ->
+  juxta(Input, [fun core/2, fun preversion/2, fun metadata/2],
         fun (<<>>, [Core,Pre,Meta]) -> {Core,Pre,Meta} end).
 
--spec unparse(version()) -> iolist().
+-spec unparse(version()) -> binary().
 unparse({{X,Y,Z},Pre,Meta}) ->
-    [integer_to_binary(X),$.,integer_to_binary(Y),$.,integer_to_binary(Z),
-     unparse_ext($-, fun unparse_pre_seg/1, Pre)
-    |unparse_ext($+, fun unparse_meta_seg/1, Meta)].
+    <<(integer_to_binary(X))/binary,$.,
+      (integer_to_binary(Y))/binary,$.,
+      (integer_to_binary(Z))/binary,
+      (unparse_ext($-, fun unparse_pre_seg/1, Pre))/binary,
+      (unparse_ext($+, fun unparse_meta_seg/1, Meta))/binary>>.
 
 %% Comparison
 
@@ -134,9 +138,10 @@ dot(Bin, Acc, _, Cont) ->
 
 -spec unparse_ext(byte(), fun((A) -> binary()), [A]) -> iolist().
 unparse_ext(_, _, []) ->
-    [];
+    <<>>;
 unparse_ext(Prefix, F, [H|Rest]) ->
-    [Prefix,F(H)|[ [$.,F(Seg)] || Seg <- Rest ]].
+    <<Prefix,(F(H))/binary,
+      (<< <<$.,(F(Seg))/binary>> || Seg <- Rest >>)/binary>>.
 
 -spec unparse_pre_seg(binary() | non_neg_integer()) -> binary().
 unparse_pre_seg(Seg) when is_binary(Seg) ->
